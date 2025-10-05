@@ -65,13 +65,23 @@ export default function App() {
   const handleBookingSubmit = async (e) => {
     e.preventDefault();
     const turf = turfs.find(t => t._id === bookingForm.turfId);
+    if (!turf) {
+        alert('Please select a valid turf');
+        return;
+    }
     const totalPrice = turf.pricePerHour * bookingForm.duration;
     
     const bookingData = {
-      ...bookingForm,
-      turfName: turf.name,
-      totalPrice,
-      status: 'confirmed'
+        customerName: bookingForm.customerName,
+        phone: bookingForm.phone,
+        turfId: bookingForm.turfId, 
+        turfName: turf.name,
+        date: bookingForm.date,
+        timeSlot: bookingForm.timeSlot,
+        duration: parseInt(bookingForm.duration),
+        players: parseInt(bookingForm.players),
+        totalPrice: totalPrice,
+        status: 'confirmed'
     };
 
     try {
@@ -82,7 +92,7 @@ export default function App() {
         await axios.post(`${API_URL}/bookings`, bookingData);
         alert('Booking created successfully!');
       }
-      loadBookings();
+      await loadBookings();
       resetBookingForm();
     } catch (error) {
       console.error('Error saving booking:', error);

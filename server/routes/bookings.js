@@ -18,27 +18,21 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Get single booking
-router.get('/:id', async (req, res) => {
-  try {
-    const booking = await Booking.findById(req.params.id);
-    if (!booking) {
-      return res.status(404).json({ message: 'Booking not found' });
-    }
-    res.json(booking);
-  } catch (err) {
-    console.error('Error fetching booking:', err);
-    res.status(500).json({ 
-      message: 'Error fetching booking',
-      error: err.message 
-    });
-  }
-});
-
 // Create a booking
 router.post('/', async (req, res) => {
   try {
-    console.log('POST /api/bookings - Creating booking:', req.body);
+    console.log('POST /api/bookings - Creating booking with data:', req.body);
+    
+    // Validate required fields
+    const requiredFields = ['customerName', 'phone', 'turfId', 'turfName', 'date', 'timeSlot', 'duration', 'players', 'totalPrice'];
+    const missingFields = requiredFields.filter(field => !req.body[field]);
+    
+    if (missingFields.length > 0) {
+      return res.status(400).json({ 
+        message: 'Missing required fields',
+        error: `Please provide: ${missingFields.join(', ')}` 
+      });
+    }
     
     const booking = new Booking({
       customerName: req.body.customerName,
@@ -47,9 +41,9 @@ router.post('/', async (req, res) => {
       turfName: req.body.turfName,
       date: req.body.date,
       timeSlot: req.body.timeSlot,
-      duration: req.body.duration,
-      players: req.body.players,
-      totalPrice: req.body.totalPrice,
+      duration: parseInt(req.body.duration),
+      players: parseInt(req.body.players),
+      totalPrice: parseFloat(req.body.totalPrice),
       status: req.body.status || 'confirmed'
     });
 
@@ -58,6 +52,16 @@ router.post('/', async (req, res) => {
     res.status(201).json(newBooking);
   } catch (err) {
     console.error('Error creating booking:', err);
+    
+    // Handle validation errors
+    if (err.name === 'ValidationError') {
+      const errors = Object.values(err.errors).map(e => e.message);
+      return res.status(400).json({ 
+        message: 'Validation error',
+        error: errors.join(', ')
+      });
+    }
+    
     res.status(400).json({ 
       message: 'Error creating booking',
       error: err.message 
@@ -69,6 +73,7 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
   try {
     console.log('PUT /api/bookings/:id - Updating booking:', req.params.id);
+    console.log('Update data:', req.body);
     
     const booking = await Booking.findById(req.params.id);
     if (!booking) {
