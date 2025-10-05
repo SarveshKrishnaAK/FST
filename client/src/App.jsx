@@ -4,6 +4,9 @@ import { Calendar, Clock, MapPin, Users, Edit2, Trash2, Plus, X } from 'lucide-r
 
 const API_URL = import.meta.env.VITE_API_URL || '/api';
 
+axios.defaults.headers.post['Content-Type'] = 'application/json';
+axios.defaults.headers.put['Content-Type'] = 'application/json';
+
 export default function App() {
   const [bookings, setBookings] = useState([]);
   const [turfs, setTurfs] = useState([]);
