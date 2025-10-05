@@ -73,7 +73,7 @@ export default function App() {
     
     const bookingData = {
         customerName: bookingForm.customerName,
-        phone: bookingForm.phone,
+        phone: bookingForm.phone.trim(),
         turfId: bookingForm.turfId, 
         turfName: turf.name,
         date: bookingForm.date,
@@ -389,7 +389,24 @@ export default function App() {
                     className="w-full bg-green-900 border-2 border-green-700 rounded-lg px-4 py-3 text-white focus:border-green-500 focus:outline-none"
                   />
                 </div>
-              </div>
+              
+
+              {/* Phone Number */}
+                <div>
+                    <label className="block text-green-300 font-semibold mb-2">
+                        Phone Number <span className="text-red-400">*</span>
+                    </label>
+                    <input
+                        type="tel"
+                        required
+                        value={bookingForm.phone}
+                        onChange={(e) => setBookingForm({ ...bookingForm, phone: e.target.value })}
+                        placeholder="10-digit mobile number"
+                        pattern="[0-9]*"
+                        className="w-full bg-green-900 border-2 border-green-700 rounded-lg px-4 py-3 text-white focus:border-green-500 focus:outline-none placeholder-green-500"
+                    />
+                </div>
+            </div>
               
               <div>
                 <label className="block text-green-300 font-semibold mb-2">Select Turf</label>
