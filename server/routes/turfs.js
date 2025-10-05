@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const Turf = require('./models/Turf');
+const Turf = require('../models/Turf');
 
 // Get all turfs
 router.get('/', async (req, res) => {
